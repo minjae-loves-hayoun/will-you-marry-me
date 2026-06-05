@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하윤에게 🩷</title>
+  <meta property="og:title" content="하윤에게 🩷">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Step 0: 인트로 -->
+  <section id="intro-screen" class="screen active">
+    <div class="intro-text">
+      <p id="intro-name" class="intro-name">하윤아,</p>
+      <p id="intro-question" class="intro-question">그 때 기억나?</p>
+    </div>
+  </section>
+
+  <!-- Step 1: 슬라이드쇼 -->
+  <section id="slideshow-screen" class="screen">
+    <div id="slide-bg-a" class="slide-bg"></div>
+    <div id="slide-bg-b" class="slide-bg"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-progress-wrap">
+      <div id="slide-progress-bar" class="slide-progress-bar"></div>
+    </div>
+    <div class="slide-caption-wrap">
+      <p id="slide-caption" class="slide-caption"></p>
+    </div>
+  </section>
+
+  <!-- Step 2: 편지 타이핑 -->
+  <section id="letter-screen" class="screen">
+    <div id="letter-text" class="letter-text"></div>
+    <div id="letter-cursor" class="cursor">▌</div>
+  </section>
+
+  <!-- Step 3: 프로포즈 버튼 -->
+  <section id="proposal-screen" class="screen">
+    <p id="proposal-title" class="proposal-title">나랑 결혼해줄래? 💍</p>
+    <div id="btn-wrap" class="btn-wrap">
+      <button id="btn-yes" class="btn-yes" onclick="onYes()">응 💕</button>
+      <button id="btn-no" class="btn-no">싫어</button>
+    </div>
+  </section>
+
+  <!-- Step 4: 축하 + 갤러리 -->
+  <section id="celebrate-screen" class="screen">
+    <div id="confetti-container"></div>
+    <div class="celebrate-hero">
+      <p class="celebrate-text">사랑해 ♥</p>
+      <p class="celebrate-sub">스크롤해서 우리의 추억을 둘러봐 🩷</p>
+    </div>
+    <div id="memory-gallery" class="memory-gallery"></div>
+  </section>
+
+  <audio id="bgm" loop>
+    <source src="bgm.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="bgmBtn" class="bgm-btn" onclick="toggleBgm()" aria-label="배경음악 켜기/끄기">
+    <span id="bgmIcon">♪</span>
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
