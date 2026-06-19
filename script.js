@@ -46,14 +46,18 @@ function showScreen(id) {
 
 // ── 인트로 ────────────────────────────────────────────────────────────────
 function runIntro() {
-  SLIDES.slice(0, 3).forEach(s => preloadImage(s.img));
+  SLIDES.forEach(s => preloadImage(s.img));
 
   const nameEl = document.getElementById('intro-name');
   const questionEl = document.getElementById('intro-question');
 
   setTimeout(() => nameEl.classList.add('visible'), 400);
   setTimeout(() => questionEl.classList.add('visible'), 1400);
-  setTimeout(startSlideshow, 3200);
+
+  Promise.all([
+    new Promise(resolve => setTimeout(resolve, 3200)),
+    preloadImage(SLIDES[0].img),
+  ]).then(startSlideshow);
 }
 
 // ── 슬라이드쇼 ────────────────────────────────────────────────────────────
@@ -61,9 +65,17 @@ let currentSlide = 0;
 let slideActive = 'a';
 let slideTimer = null;
 
+const imagePromises = new Map();
 function preloadImage(src) {
-  const img = new Image();
-  img.src = src;
+  if (!imagePromises.has(src)) {
+    const p = new Promise(resolve => {
+      const img = new Image();
+      img.onload = img.onerror = () => resolve();
+      img.src = src;
+    });
+    imagePromises.set(src, p);
+  }
+  return imagePromises.get(src);
 }
 
 function startProgressBar() {
@@ -111,33 +123,34 @@ function advanceSlide() {
 
   currentSlide++;
   const slide = SLIDES[currentSlide];
-  const bgA = document.getElementById('slide-bg-a');
-  const bgB = document.getElementById('slide-bg-b');
-  const caption = document.getElementById('slide-caption');
 
-  const incoming = slideActive === 'a' ? bgB : bgA;
-  const outgoing = slideActive === 'a' ? bgA : bgB;
+  preloadImage(slide.img).then(() => {
+    const bgA = document.getElementById('slide-bg-a');
+    const bgB = document.getElementById('slide-bg-b');
+    const caption = document.getElementById('slide-caption');
 
-  incoming.style.backgroundImage = `url('${slide.img}')`;
-  incoming.style.opacity = '0';
+    const incoming = slideActive === 'a' ? bgB : bgA;
+    const outgoing = slideActive === 'a' ? bgA : bgB;
 
-  if (SLIDES[currentSlide + 1]) preloadImage(SLIDES[currentSlide + 1].img);
+    incoming.style.backgroundImage = `url('${slide.img}')`;
+    incoming.style.opacity = '0';
 
-  caption.classList.remove('visible');
+    caption.classList.remove('visible');
 
-  requestAnimationFrame(() => {
-    outgoing.style.opacity = '0';
-    incoming.style.opacity = '1';
-    slideActive = slideActive === 'a' ? 'b' : 'a';
+    requestAnimationFrame(() => {
+      outgoing.style.opacity = '0';
+      incoming.style.opacity = '1';
+      slideActive = slideActive === 'a' ? 'b' : 'a';
+    });
+
+    setTimeout(() => {
+      caption.textContent = slide.caption;
+      caption.classList.add('visible');
+    }, 500);
+
+    startProgressBar();
+    slideTimer = setTimeout(advanceSlide, SLIDE_DURATION);
   });
-
-  setTimeout(() => {
-    caption.textContent = slide.caption;
-    caption.classList.add('visible');
-  }, 500);
-
-  startProgressBar();
-  slideTimer = setTimeout(advanceSlide, SLIDE_DURATION);
 }
 
 document.getElementById('slideshow-screen').addEventListener('click', advanceSlide);
